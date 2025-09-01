@@ -5,7 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import dbConfig from './config/db.config';
 import appConfig from './config/app.config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -21,14 +22,8 @@ import { JwtModule } from '@nestjs/jwt';
       }),
       inject: [ConfigService]
     }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('app.jwt.secret'),
-        signOptions: { expiresIn: configService.get<string>('app.jwt.expiresIn') },
-      }),
-      inject: [ConfigService]
-    })
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
